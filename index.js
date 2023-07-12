@@ -11,14 +11,11 @@ const connect = mongoose.connect(url, {
 connect.then(() => {
 	console.log('Connected correctly to server');
 
-	const newCampsite = new Campsite({
+	//argument new object to create, and automatically saves it, thus negating the .save()
+	Campsite.create({
 		name: 'React Lake Campground',
 		description: 'test',
-	});
-
-	//save document to db and return a promise indicating failure or success
-	newCampsite
-		.save()
+	})
 		.then((campsite) => {
 			console.log(campsite);
 			//find saved documents based on campsite model
