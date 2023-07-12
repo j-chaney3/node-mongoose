@@ -4,6 +4,7 @@ const Campsite = require('./models/campsite');
 const url = 'mongodb://127.0.0.1:27017/nucampsite';
 const connect = mongoose.connect(url, {
 	useCreateIndex: true,
+	useFindAndModify: false,
 	useNewUrlParser: true,
 	useUnifiedTopology: true,
 });
@@ -18,11 +19,31 @@ connect.then(() => {
 	})
 		.then((campsite) => {
 			console.log(campsite);
-			//find saved documents based on campsite model
-			return Campsite.find();
+
+			return Campsite.findByIdAndUpdate(
+				campsite._id,
+				{
+					$set: { description: 'Updated Test Document' },
+				},
+				{
+					new: true,
+				}
+			);
 		})
-		.then((campsites) => {
-			console.log(campsites);
+		.then((campsite) => {
+			console.log(campsite);
+
+			campsite.comments.push({
+				rating: 5,
+				text: 'What a magnificent view!',
+				author: 'Tinus Lorvaldes',
+			});
+
+			//return new campsite with saved comments subdocument
+			return campsite.save();
+		})
+		.then((campsite) => {
+			console.log(campsite);
 			return Campsite.deleteMany();
 		})
 		.then(() => {
